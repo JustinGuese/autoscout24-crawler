@@ -89,7 +89,7 @@ def run_once(cycle_counter,path_to_visited_urls,countries,folders):
         
         car_URLs = []
         
-        for page in range(1,21):# 21
+        for page in range(1,2):# this part is heavy on the ram. after x runs it saves to disk. 2 works for me (16 gb)
             try:
                 url = 'https://www.autoscout24.de/lst/?sort=age&desc=1&ustate=N%2CU&size=20&page='+str(page)+ '&cy=' + countries[country] +'&atype=C&'
                 only_a_tags = SoupStrainer("a")
