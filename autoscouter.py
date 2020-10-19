@@ -74,9 +74,8 @@ def getCar(URL,country,cycle_counter,q):
             err = 'https://www.autoscout24.de'+URL+ " cycle: "+str(cycle_counter)+"\n"
             file.write(err)
 
-car_counter=1
-cycle_counter=0
-while True:
+
+def run_once(cycle_counter,path_to_visited_urls,countries,folders):
     with open(path_to_visited_urls) as file:
         visited_urls = json.load(file)
     
@@ -90,7 +89,7 @@ while True:
         
         car_URLs = []
         
-        for page in range(1,2):# 21
+        for page in range(1,21):# 21
             try:
                 url = 'https://www.autoscout24.de/lst/?sort=age&desc=1&ustate=N%2CU&size=20&page='+str(page)+ '&cy=' + countries[country] +'&atype=C&'
                 only_a_tags = SoupStrainer("a")
@@ -126,7 +125,6 @@ while True:
             while not q.empty():
                 # wait for queue to finish 
                 URL, carlist = q.get()
-                print(URL,carlist)
                 multiple_cars_dict[URL] = carlist
         else:
             print("\U0001F634 will sleep bc too many requests")
@@ -139,27 +137,30 @@ while True:
     with open("data/visited/visited_urls.json", "w") as file:
         json.dump(visited_urls, file)
 
+car_counter=1
+cycle_counter=0
 
-
-# pxs = []
-# cpus = cpu_count()
-# print("Raping your system on %d cpus"%cpus)
-# while True:
-#     if len(pxs) == 0: # should onyl happen first time
-#         for t in range(cpus): 
-#             sleep(0.1) # give dat poor api some time :(
-#             t1 = Process(target=run_once, args=(path_to_visited_urls,countries,folders))
-#             t1.start()
-#             pxs.append(t1)
+pxs = []
+cpus = cpu_count()
+print("Raping your system on %d cpus"%cpus)
+while True:
+    if len(pxs) == 0: # should onyl happen first time
+        for t in range(cpus): 
+            sleep(0.01) # give dat poor api some time :(
+            t1 = Process(target=run_once, args=(cycle_counter,path_to_visited_urls,countries,folders))
+            t1.start()
+            pxs.append(t1)
+            cycle_counter += 1
     
-#     while all(proces.is_alive() for proces in pxs): # while all processes running
-#         sleep(0.1) # wait 
-#     # if one is done get to this step 
-#     for i,p in enumerate(pxs):
-#         alive = p.is_alive()
-#         if not alive:
-#             # if one finished start a new one instead
-#             t1 = Process(target=run_once, args=(path_to_visited_urls,countries,folders))
-#             t1.start()
-#             pxs[i] = t1
-#     # only reach this if all processes done
+    while all(proces.is_alive() for proces in pxs): # while all processes running
+        sleep(0.1) # wait 
+    # if one is done get to this step 
+    for i,p in enumerate(pxs):
+        alive = p.is_alive()
+        if not alive:
+            # if one finished start a new one instead
+            t1 = Process(target=run_once, args=(cycle_counter,path_to_visited_urls,countries,folders))
+            t1.start()
+            pxs[i] = t1
+            cycle_counter += 1
+    # only reach this if all processes done
