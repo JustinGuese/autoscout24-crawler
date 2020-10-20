@@ -83,8 +83,8 @@ def job():
 import schedule
 import time
 
-schedule.every(1).minutes.do(job)
+schedule.every(1).hours.do(job)
 print("all set, waiting,...")
 while 1:
     schedule.run_pending()
-    time.sleep(10)
+    time.sleep(60)
