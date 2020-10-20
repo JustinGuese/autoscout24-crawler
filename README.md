@@ -1,5 +1,6 @@
 # installation
 
+``
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh ~/
 chmod +x ~/Miniconda3*.sh
 ~/Miniconda3*.sh
@@ -11,21 +12,22 @@ conda create --name autoscout
 source activate autoscout
 conda install pip
 pip install -r requirements.txt
+``
 
 # multiprocessing
 
 sometimes single are faster. try running multiprocess
 
-python autoscouter.py
+`python autoscouter.py`
 
 ## no multiprocess
 
 ## run scheduler via python
 
-python dfMergerCronNotWorking.py
+`python dfMergerCronNotWorking.py`
 
 ## run crawler (no multiprocess)
 
-python autoscouter_nomultiprocess.py
+`python autoscouter_nomultiprocess.py`
 
 e.g. run every command in one screen session or so
