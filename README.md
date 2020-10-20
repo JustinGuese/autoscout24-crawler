@@ -1,6 +1,6 @@
 # installation
 
-``
+```
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh ~/
 chmod +x ~/Miniconda3*.sh
 ~/Miniconda3*.sh
@@ -12,7 +12,7 @@ conda create --name autoscout
 source activate autoscout
 conda install pip
 pip install -r requirements.txt
-``
+```
 
 # multiprocessing
 
