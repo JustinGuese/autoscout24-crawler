@@ -42,7 +42,7 @@ def job():
     # load old
     old = pd.read_csv(folder+"largeDF.csv.gz",compression="gzip" )
     print("Size of downloaded s3 largeDF: ",old.shape)
-    oldsize = old.shape[1]
+    oldsize = old.shape[0]
     new = pd.concat([result,old])
     new = new.drop_duplicates()
     new = new.dropna(thresh=20)
@@ -50,7 +50,7 @@ def job():
 
     new.to_csv(folder+"largeDF.csv.gz",compression="gzip")
     print("New size: ",new.shape)
-    additions = new.shape[1] - oldsize
+    additions = new.shape[0] - oldsize
     print("additions: ",additions)
     with open("workingLog.txt","a") as file:
             file.write(str(datetime.now())+" differences: "+str(additions)+" \n")
