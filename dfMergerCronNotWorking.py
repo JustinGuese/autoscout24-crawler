@@ -80,9 +80,11 @@ def job():
         uploaded = upload_to_aws(folder+'largeDF.csv.gz', 'datafortress-frankfurt', 'largeDF.csv.gz')
 
 
-from apscheduler.schedulers.blocking import BlockingScheduler
+import schedule
+import time
 
-scheduler = BlockingScheduler()
-scheduler.add_job(job, 'interval', hours=1)
-scheduler.start()
+schedule.every(1).minutes.do(job)
 print("all set, waiting,...")
+while 1:
+    schedule.run_pending()
+    time.sleep(10)

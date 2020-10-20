@@ -7,5 +7,5 @@ tqdm
 bs4
 lxml
 boto3
-apscheduler
+schedule
 
