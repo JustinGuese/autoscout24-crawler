@@ -59,14 +59,12 @@ def getCar(URL,country,cycle_counter,multiple_cars_dict,visited_urls):
                 austattung_liste = element.split("\n")
                 ausstattung2.extend(austattung_liste)
             car_dict["ausstattung_liste"] = sorted(list(set(ausstattung2)))
-            q.put([URL,car_dict])
             multiple_cars_dict[URL] = car_dict
             visited_urls.append(URL)
         else: # is prob url
-            q.put([URL,None])
+            pass
     except Exception as e:
         print("Problem mit Detailseite: " + str(e) + " "*50)
-        q.put([URL,None])
         with open("errorlog.txt","a") as file:
             err = 'https://www.autoscout24.de'+URL+ " cycle: "+str(cycle_counter)+"\n"
             file.write(err)
