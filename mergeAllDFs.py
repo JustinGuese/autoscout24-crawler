@@ -5,17 +5,15 @@ import glob
 
 S3UPLOAD = True
 
+folder=r'./data/autos/'
+dfs = []
+
 if S3UPLOAD:
     import boto3
     from botocore.exceptions import NoCredentialsError
     s3 = boto3.client('s3')
     s3.download_file('datafortress-frankfurt', 'largeDF.csv.gz', folder+'largeDF.csv.gz')
     # load largeDF
-
-
-
-folder=r'./data/autos/'
-dfs = []
 
 defcolumns = []
 removed = ['Scheckheftgepflegt', 'Antriebsart', 'Länderversion', 'Feinstaubplakette']
