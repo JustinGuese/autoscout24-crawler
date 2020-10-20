@@ -122,4 +122,8 @@ pxs = []
 
 print("no multiprocessing here...")
 while True:
-    run_once(cycle_counter,path_to_visited_urls,countries,folders)
+    try:
+        run_once(cycle_counter,path_to_visited_urls,countries,folders)
+    except Exception as e:
+        with open("errorlogMainthread.txt","a") as file:
+            file.write(str(datetime.now())+" "+str(e)+" \n")
