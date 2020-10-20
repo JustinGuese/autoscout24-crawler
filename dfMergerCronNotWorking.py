@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import numpy as np
 import glob
+from datetime import datetime #um den Daten Timestamps zu geben
 
 
 
@@ -41,6 +42,7 @@ def job():
     # load old
     old = pd.read_csv(folder+"largeDF.csv.gz",compression="gzip" )
     print("Size of downloaded s3 largeDF: ",old.shape)
+    oldsize = old.shape[1]
     new = pd.concat([result,old])
     new = new.drop_duplicates()
     new = new.dropna(thresh=20)
@@ -48,6 +50,10 @@ def job():
 
     new.to_csv(folder+"largeDF.csv.gz",compression="gzip")
     print("New size: ",new.shape)
+    additions = new.shape[1] - oldsize
+    print("additions: ",additions)
+    with open("workingLog.txt","a") as file:
+            file.write(str(datetime.now())+" differences: "+str(additions)+" \n")
     # remove old
     fileList = glob.glob(folder+'*.csv')
     for filePath in fileList:
