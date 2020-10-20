@@ -103,7 +103,7 @@ def run_once(cycle_counter,path_to_visited_urls,countries,folders):
         print("")
         if len(car_URLs_unique)>0:
             for link in car_URLs_unique:
-                getCar(URL,country,cycle_counter,multiple_cars_dict,visited_urls)
+                getCar(link,country,cycle_counter,multiple_cars_dict,visited_urls)
                 
         else:
             print("\U0001F634 will sleep bc too many requests")
