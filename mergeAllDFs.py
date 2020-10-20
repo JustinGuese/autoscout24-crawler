@@ -38,6 +38,7 @@ print("size after cleanup: ",result.shape)
 
 # load old
 old = pd.read_csv(folder+"largeDF.csv.gz",compression="gzip" )
+print("Size of downloaded s3 largeDF: ",old.shape)
 new = pd.concat([result,old])
 new = new.drop_duplicates()
 new = new.dropna(thresh=20)
