@@ -131,7 +131,7 @@ def run_once(cycle_counter,path_to_visited_urls,countries,folders):
             sleep(60)
     if len(multiple_cars_dict)>0:
         df = pd.DataFrame(multiple_cars_dict).T
-        print("wiritng.... "+str(datetime.now()))+".csv")
+        print("wiritng.... "+str(datetime.now())+".csv")
         df.to_csv("data/autos/"+re.sub("[.,:,-, ]","_",str(datetime.now()))+".csv",sep=";",index_label="url")
     else:
         print("Keine Daten")
