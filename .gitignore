@@ -1,0 +1,4 @@
+.ipynb_checkpoints/
+data/autos/*.csv
+errorlog.txt
+errorlogMainthread.txt

@@ -1,0 +1,18 @@
+name: autoscout
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip
+  - pip:
+    - beautifulsoup4
+    - lxml
+    - matplotlib
+    - numpy
+    - pandas
+    - scikit-learn
+    - scipy
+    - sklearn
+    - tqdm
+    - urllib3
+    - xgboost

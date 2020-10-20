@@ -1,0 +1,11 @@
+sklearn
+pandas
+requests
+numpy
+matplotlib
+tqdm
+bs4
+lxml
+boto3
+
+
