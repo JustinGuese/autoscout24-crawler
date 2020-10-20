@@ -95,7 +95,7 @@ def run_once(cycle_counter,path_to_visited_urls,countries,folders):
                 only_a_tags = SoupStrainer("a")
                 soup = BeautifulSoup(urllib.request.urlopen(url).read(),'lxml', parse_only=only_a_tags)
             except Exception as e:
-                print("uebersicht: " + str(e) +" "*50, end="\r")
+                print("uebersicht: " + str(e) +" "*50, end='\r')
                 raise
             for link in soup.find_all("a"):
                 if r"/angebote/" in str(link.get("href")):
