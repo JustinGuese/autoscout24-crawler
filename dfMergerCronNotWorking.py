@@ -76,7 +76,7 @@ def job():
                 print("Credentials not available")
                 return False
 
-
+        uploaded = upload_to_aws('workingLog.txt', 'datafortress-frankfurt', 'workingLog.txt')
         uploaded = upload_to_aws(folder+'largeDF.csv.gz', 'datafortress-frankfurt', 'largeDF.csv.gz')
 
 
