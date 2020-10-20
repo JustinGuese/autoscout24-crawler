@@ -102,7 +102,7 @@ def run_once(cycle_counter,path_to_visited_urls,countries,folders):
                     car_URLs.append(link.get("href"))
             car_URLs_unique = [car for car in list(set(car_URLs)) if car not in visited_urls]
             
-            print(f'Lauf {cycle_counter} | {country} | Seite {page} | {len(car_URLs_unique)} neue URLs', end="\r")
+            #print(f'Lauf {cycle_counter} | {country} | Seite {page} | {len(car_URLs_unique)} neue URLs', end="\r")
         print("")
         if len(car_URLs_unique)>0:
             q = Queue()
