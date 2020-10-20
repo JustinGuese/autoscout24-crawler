@@ -7,9 +7,6 @@ import re #regular expressions
 import os #Dateipfade erstellen und lesen
 import pandas as pd #Datenanalyse und -manipulation
 from pathlib import Path
-from multiprocessing import Process, Queue,cpu_count
-import threading
-from multiprocessing.pool import ThreadPool
 
 
 folders = ["data/visited/","data/autos/"]
@@ -34,7 +31,7 @@ countries = {"Deutschland": "D",
 
 
 
-def getCar(URL,country,cycle_counter,q):
+def getCar(URL,country,cycle_counter,multiple_cars_dict,visited_urls):
     problemURLS = ["https://www.autoscout24.de/leasing/angebote/"]
     try:
         if URL not in problemURLS:
@@ -63,8 +60,8 @@ def getCar(URL,country,cycle_counter,q):
                 ausstattung2.extend(austattung_liste)
             car_dict["ausstattung_liste"] = sorted(list(set(ausstattung2)))
             q.put([URL,car_dict])
-            #multiple_cars_dict[URL] = car_dict
-            #visited_urls.append(URL)
+            multiple_cars_dict[URL] = car_dict
+            visited_urls.append(URL)
         else: # is prob url
             q.put([URL,None])
     except Exception as e:
@@ -105,27 +102,9 @@ def run_once(cycle_counter,path_to_visited_urls,countries,folders):
             #print(f'Lauf {cycle_counter} | {country} | Seite {page} | {len(car_URLs_unique)} neue URLs', end="\r")
         print("")
         if len(car_URLs_unique)>0:
-            q = Queue()
-            processes = []
             for link in car_URLs_unique:
-                sleep(0.001)
-                p = Process(target=getCar, args=(link, country, cycle_counter, q,))
-                p.start()
-                processes.append(p)
-            mercy = 0
-            while any(proces.is_alive() for proces in processes) and mercy <= 20: # while any processes running
-                sleep(0.1) # wait
-                #crnt = [proces.is_alive() for proces in processes]
-                #print(crnt)
-                mercy += 1
-            if mercy == 20:
-                for thread in processes:
-                    if thread.is_alive():
-                        thread.terminate() # kill all running processes
-            while not q.empty():
-                # wait for queue to finish 
-                URL, carlist = q.get()
-                multiple_cars_dict[URL] = carlist
+                getCar(URL,country,cycle_counter,multiple_cars_dict,visited_urls)
+                
         else:
             print("\U0001F634 will sleep bc too many requests")
             sleep(60)
@@ -142,7 +121,7 @@ car_counter=1
 cycle_counter=0
 
 pxs = []
-cpus = cpu_count()
-print("Raping your system on %d cpus"%cpus)
+
+print("no multiprocessing here...")
 while True:
     run_once(cycle_counter,path_to_visited_urls,countries,folders)

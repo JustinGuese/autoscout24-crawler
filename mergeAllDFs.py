@@ -5,6 +5,14 @@ import glob
 
 S3UPLOAD = True
 
+if S3UPLOAD:
+    import boto3
+    from botocore.exceptions import NoCredentialsError
+    s3 = boto3.client('s3')
+    s3.download_file('datafortress-frankfurt', 'largeDF.csv.gz', folder+'largeDF.csv.gz')
+    # load largeDF
+
+
 
 folder=r'./data/autos/'
 dfs = []
@@ -48,10 +56,7 @@ for filePath in fileList:
         print("Error while deleting file : ", filePath)
 
 if S3UPLOAD:
-    import boto3
-    from botocore.exceptions import NoCredentialsError
     def upload_to_aws(local_file, bucket, s3_file):
-        s3 = boto3.client('s3')
 
         try:
             s3.upload_file(local_file, bucket, s3_file)
