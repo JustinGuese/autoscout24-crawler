@@ -127,4 +127,3 @@ while True:
     except Exception as e:
         with open("errorlogMainthread.txt","a") as file:
             file.write(str(datetime.now())+" "+str(e)+" \n")
-        raise
