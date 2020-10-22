@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Serverless wine classifier'
+Globals:
+  Function:
+    Timeout: 10
+Resources:
+  WineClassifierFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: WineClassifierFunction
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      MemorySize: 1024
+      Role: arn:aws:iam::441610821556:role/lambda_autoscouts3
+      Environment:
+        Variables:
+          s3_bucket: datafortress-frankfurt
+          model_name: randomforest_fullytrained.sav
+          scaler_name: scaler_fullytrained.sav
+      Events:
+        WineClassifier:
+          Type: Api
+          Properties:
+            Path: /classify
+            Method: post
+Outputs:
+  WineClassifierApi:
+    Description: API Gateway endpoint URL for Prod stage for WineClassifier function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/classify/

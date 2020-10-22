@@ -8,4 +8,5 @@ bs4
 lxml
 boto3
 schedule
-
+espandas
+elasticsearch
