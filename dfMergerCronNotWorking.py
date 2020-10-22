@@ -13,7 +13,6 @@ def job():
     dfs = []
     if S3UPLOAD:
         import boto3
-        from botocore.exceptions import NoCredentialsError
         s3 = boto3.client('s3')
         s3.download_file('datafortress-frankfurt', 'largeDF.csv.gz', folder+'largeDF.csv.gz')
         # load largeDF
@@ -23,15 +22,15 @@ def job():
     selection = ["url","country","date","Zustand","Garantie","Marke","Modell","Angebotsnummer","Außenfarbe","Lackierung","Farbe laut Hersteller","Innenausstattung","Karosserieform","Anzahl Türen","Sitzplätze","Schlüsselnummer","Getriebeart","Gänge","Hubraum","Kraftstoff","Schadstoffklasse","haendler","privat","ort","price","ausstattung_liste","Erstzulassung","Zylinder","Leergewicht"]
 
     for filename in os.listdir(folder):
-
-        print(filename)
-        df = pd.read_csv(folder+filename, delimiter=";")
-        for col in selection:
-            if col not in df.columns:
-                df[col] = 0
-        df = df[selection]
-        
-        dfs.append(df)
+        if "largeDF" not in filename:
+            #print(filename)
+            df = pd.read_csv(folder+filename, delimiter=";",compression="gzip")
+            for col in selection:
+                if col not in df.columns:
+                    df[col] = 0
+            df = df[selection]
+            
+            dfs.append(df)
 
     result = pd.concat(dfs)
     print("size before cleanup: ",result.shape)
