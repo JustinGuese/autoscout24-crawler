@@ -1,2 +1,3 @@
-dockersetup/*
+dockersetup/data/*
+dockersetup/elk/*
 *.sav

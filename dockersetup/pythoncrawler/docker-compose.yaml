@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  python:
+    build: .
+    restart: always
+    #image: pythonautoscout:1.1
+    container_name: autoscoutpythoncrawler
+    volumes:
+      - ../../data/autos:/autos
+      - ../../data/visited:/visited
+    cpus: "0.5"
