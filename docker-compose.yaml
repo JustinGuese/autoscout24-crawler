@@ -1,0 +1,9 @@
+# python crawler only, extensive see pythoncrawler
+version: '3.8'
+services:
+  python:
+    build: ./dockersetup/pythoncrawler
+    volumes:
+      - ./data/autos:/autos
+      - ./data/visited:/visited
+    cpus: "0.5"

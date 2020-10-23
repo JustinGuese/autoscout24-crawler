@@ -3,5 +3,5 @@ COPY /src/autoscouter_nomultiprocess.py /
 COPY /src/copyschedule.py /
 COPY /src/scriptexec.sh /
 RUN chmod a+x ./scriptexec.sh
-CMD [ "./scriptexec.sh" ] 
+CMD ["python", "./autoscouter_nomultiprocess.py" ] 
 

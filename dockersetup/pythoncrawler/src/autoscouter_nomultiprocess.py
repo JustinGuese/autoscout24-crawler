@@ -9,11 +9,11 @@ import pandas as pd #Datenanalyse und -manipulation
 from pathlib import Path
 
 
-folders = ["data/visited/","data/autos/"]
+folders = ["./visited/","./autos/"]
 for folder in folders:
     Path(folder).mkdir(parents=True, exist_ok=True)
 
-path_to_visited_urls = "data/visited/visited_urls.json"
+path_to_visited_urls = "./visited/visited_urls.json"
 if not os.path.isfile(path_to_visited_urls):
     with open(path_to_visited_urls,"w") as file:
         json.dump([],file)
@@ -29,7 +29,7 @@ countries = {"Deutschland": "D",
             #  "Niederlande": "NL"
              }
 
-
+print("jo script running")
 
 def getCar(URL,country,cycle_counter,multiple_cars_dict,visited_urls):
     problemURLS = ["https://www.autoscout24.de/leasing/angebote/"]
@@ -108,10 +108,10 @@ def run_once(cycle_counter,path_to_visited_urls,countries,folders):
     if len(multiple_cars_dict)>0:
         df = pd.DataFrame(multiple_cars_dict).T
         print("wiritng.... "+str(datetime.now())+".csv")
-        df.to_csv("data/autos/"+re.sub("[.,:,-, ]","_",str(datetime.now()))+".csv",sep=";",index_label="url",compression="gzip")
+        df.to_csv("./autos/"+re.sub("[.,:,-, ]","_",str(datetime.now()))+".csv",sep=";",index_label="url",compression="gzip")
     else:
         print("Keine Daten")
-    with open("data/visited/visited_urls.json", "w") as file:
+    with open("./visited/visited_urls.json", "w") as file:
         json.dump(visited_urls, file)
 
 car_counter=1
@@ -120,9 +120,88 @@ cycle_counter=0
 pxs = []
 
 print("no multiprocessing here...")
+
+# upload s3 script
+
+def uploadjob():
+    S3UPLOAD = True
+
+    folder=r'./autos/'
+    dfs = []
+    if S3UPLOAD:
+        import boto3
+        s3 = boto3.client('s3')
+        s3.download_file('datafortress-frankfurt', 'largeDF.csv.gz', folder+'largeDF.csv.gz')
+        # load largeDF
+
+    selection = ["url","country","date","Zustand","Garantie","Marke","Modell","Angebotsnummer","Außenfarbe","Lackierung","Farbe laut Hersteller","Innenausstattung","Karosserieform","Anzahl Türen","Sitzplätze","Schlüsselnummer","Getriebeart","Gänge","Hubraum","Kraftstoff","Schadstoffklasse","haendler","privat","ort","price","ausstattung_liste","Erstzulassung","Zylinder","Leergewicht"]
+
+    for filename in os.listdir(folder):
+        if "largeDF" not in filename:
+            #print(filename)
+            df = pd.read_csv(folder+filename, delimiter=";",compression="gzip")
+            for col in selection:
+                if col not in df.columns:
+                    df[col] = 0
+            df = df[selection]
+            
+            dfs.append(df)
+
+    result = pd.concat(dfs)
+    print("size before cleanup: ",result.shape)
+    result = result.drop_duplicates()
+    result = result.dropna(thresh=20)
+    print("size after cleanup: ",result.shape)
+
+    # load old
+    old = pd.read_csv(folder+"largeDF.csv.gz",compression="gzip" )
+    print("Size of downloaded s3 largeDF: ",old.shape)
+    oldsize = old.shape[0]
+    new = pd.concat([result,old])
+    new = new.drop_duplicates()
+    new = new.dropna(thresh=20)
+
+
+    new.to_csv(folder+"largeDF.csv.gz",compression="gzip")
+    print("New size: ",new.shape)
+    additions = new.shape[0] - oldsize
+    print("additions: ",additions)
+    with open("workingLog.txt","a") as file:
+            file.write(str(datetime.now())+" differences: "+str(additions)+" \n")
+    # remove old
+    fileList = glob.glob(folder+'*.csv')
+    for filePath in fileList:
+        try:
+            os.remove(filePath)
+        except:
+            print("Error while deleting file : ", filePath)
+
+    if S3UPLOAD:
+        def upload_to_aws(local_file, bucket, s3_file):
+
+            try:
+                s3.upload_file(local_file, bucket, s3_file)
+                print("Upload Successful")
+                return True
+            except FileNotFoundError:
+                print("The file was not found")
+                return False
+            except NoCredentialsError:
+                print("Credentials not available")
+                return False
+
+        uploaded = upload_to_aws('workingLog.txt', 'datafortress-frankfurt', 'workingLog.txt')
+        uploaded = upload_to_aws(folder+'largeDF.csv.gz', 'datafortress-frankfurt', 'largeDF.csv.gz')
+
+
+cnt = 0
 while True:
     try:
         run_once(cycle_counter,path_to_visited_urls,countries,folders)
+        if cnt > 20:
+            uploadjob()
+            cnt = 0
+        cnt += 1
     except Exception as e:
         #with open("errorlogMainthread.txt","a") as file:
         #    file.write(str(datetime.now())+" "+str(e)+" \n")

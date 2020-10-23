@@ -1,3 +1,5 @@
 #!/bin/bash
-exec python autoscouter_nomultiprocess.py &
-exec python copyschedule.py
+exec python autoscouter_docker.py &
+exec echo "end" &
+exec ls
+#exec python copyschedule.py
