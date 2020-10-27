@@ -140,14 +140,12 @@ def uploadjob():
 
     for filename in os.listdir(folder):
         if "largeDF" not in filename:
-            #print(filename)
-            if "largeDF" not in filename:
-                df = pd.read_csv(folder+filename, delimiter=";",compression="gzip")
-                for col in selection:
-                    if col not in df.columns:
-                        df[col] = 0
-                df = df[selection]
-                dfs.append(df)
+            df = pd.read_csv(folder+filename, delimiter=";",compression="gzip")
+            for col in selection:
+                if col not in df.columns:
+                    df[col] = 0
+            df = df[selection]
+            dfs.append(df)
 
     result = pd.concat(dfs)
     #print("size before cleanup: ",result.shape)
@@ -173,10 +171,11 @@ def uploadjob():
     # remove old
     fileList = glob.glob(folder+'*.csv.gz')
     for filePath in fileList:
-        try:
-            os.remove(filePath)
-        except:
-            print("Error while deleting file : ", filePath)
+        if "largeDF" not in filePath:
+            try:
+                os.remove(filePath)
+            except:
+                print("Error while deleting file : ", filePath)
 
     if S3UPLOAD:
         def upload_to_aws(local_file, bucket, s3_file):
