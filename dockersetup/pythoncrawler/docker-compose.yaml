@@ -1,12 +1,13 @@
 version: '3.8'
 services:
-  python:
-    build: .
+  pythonautoscout:
+    build: ./dockersetup/pythoncrawler/src/
+    image: pythonautoscout:1.1
+  autoscoutcrawl:
+    build: ./dockersetup/pythoncrawler/
     restart: always
-    #image: pythonautoscout:1.1
-    container_name: autoscoutpythoncrawler
-    #command: bash -c "./scriptexec.sh"
+    container_name: autoscoutcrawler
     volumes:
-      - ../../data/autos:/autos
-      - ../../data/visited:/visited
+      - ./data/autos:/autos
+      - ./data/visited:/visited
     cpus: "0.5"

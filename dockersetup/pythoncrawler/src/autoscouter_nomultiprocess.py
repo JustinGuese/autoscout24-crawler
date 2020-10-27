@@ -7,6 +7,7 @@ import re #regular expressions
 import os #Dateipfade erstellen und lesen
 import pandas as pd #Datenanalyse und -manipulation
 from pathlib import Path
+import glob
 
 
 folders = ["./visited/","./autos/"]
@@ -108,7 +109,7 @@ def run_once(cycle_counter,path_to_visited_urls,countries,folders):
     if len(multiple_cars_dict)>0:
         df = pd.DataFrame(multiple_cars_dict).T
         print("wiritng.... "+str(datetime.now())+".csv")
-        df.to_csv("./autos/"+re.sub("[.,:,-, ]","_",str(datetime.now()))+".csv",sep=";",index_label="url",compression="gzip")
+        df.to_csv("./autos/"+re.sub("[.,:,-, ]","_",str(datetime.now()))+".csv.gz",sep=";",index_label="url",compression="gzip")
     else:
         print("Keine Daten")
     with open("./visited/visited_urls.json", "w") as file:
@@ -139,19 +140,19 @@ def uploadjob():
     for filename in os.listdir(folder):
         if "largeDF" not in filename:
             #print(filename)
-            df = pd.read_csv(folder+filename, delimiter=";",compression="gzip")
-            for col in selection:
-                if col not in df.columns:
-                    df[col] = 0
-            df = df[selection]
-            
-            dfs.append(df)
+            if "largeDF" not in filename:
+                df = pd.read_csv(folder+filename, delimiter=";",compression="gzip")
+                for col in selection:
+                    if col not in df.columns:
+                        df[col] = 0
+                df = df[selection]
+                dfs.append(df)
 
     result = pd.concat(dfs)
-    print("size before cleanup: ",result.shape)
+    #print("size before cleanup: ",result.shape)
     result = result.drop_duplicates()
     result = result.dropna(thresh=20)
-    print("size after cleanup: ",result.shape)
+    #print("size after cleanup: ",result.shape)
 
     # load old
     old = pd.read_csv(folder+"largeDF.csv.gz",compression="gzip" )
@@ -169,7 +170,7 @@ def uploadjob():
     with open("workingLog.txt","a") as file:
             file.write(str(datetime.now())+" differences: "+str(additions)+" \n")
     # remove old
-    fileList = glob.glob(folder+'*.csv')
+    fileList = glob.glob(folder+'*.csv.gz')
     for filePath in fileList:
         try:
             os.remove(filePath)
