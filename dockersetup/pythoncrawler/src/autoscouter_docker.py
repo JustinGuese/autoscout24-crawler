@@ -65,10 +65,11 @@ def uploadjob():
     # remove old
     fileList = glob.glob(folder+'*.csv.gz')
     for filePath in fileList:
-        try:
-            os.remove(filePath)
-        except:
-            print("Error while deleting file : ", filePath)
+        if "largeDF" not in filePath:
+            try:
+                os.remove(filePath)
+            except:
+                print("Error while deleting file : ", filePath)
 
     if S3UPLOAD:
         def upload_to_aws(local_file, bucket, s3_file):
