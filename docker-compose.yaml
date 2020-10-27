@@ -3,6 +3,7 @@ version: '3.8'
 services:
   python:
     build: ./dockersetup/pythoncrawler
+    command: bash -c 'python autoscouter_docker.py'
     volumes:
       - ./data/autos:/autos
       - ./data/visited:/visited

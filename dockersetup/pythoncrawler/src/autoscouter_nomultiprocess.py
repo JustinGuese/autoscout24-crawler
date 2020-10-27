@@ -8,6 +8,7 @@ import os #Dateipfade erstellen und lesen
 import pandas as pd #Datenanalyse und -manipulation
 from pathlib import Path
 import glob
+import boto3
 
 
 folders = ["./visited/","./autos/"]

@@ -1,7 +1,5 @@
 FROM pythonautoscout:1.1
 COPY /src/autoscouter_nomultiprocess.py /
-COPY /src/copyschedule.py /
-COPY /src/scriptexec.sh /
-RUN chmod a+x ./scriptexec.sh
-CMD ["python", "./autoscouter_nomultiprocess.py" ] 
+COPY /src/autoscouter_docker.py /
+#CMD ["python", "./autoscouter_nomultiprocess.py" ] 
 
